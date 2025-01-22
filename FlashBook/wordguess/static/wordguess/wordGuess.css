@@ -1,0 +1,158 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #5e5ec9, #e8f0fe);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Game Container */
+.container {
+    text-align: center;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 600px;
+}
+
+/* Title */
+.container h1 {
+    font-size: 2.5em;
+    color: #5A2FB0;
+    margin-bottom: 20px;
+}
+
+/* Message (Game End) */
+.container h2 {
+    font-size: 1.8em;
+    color: #FF6F61;
+    margin: 20px 0;
+}
+
+/* Meaning Section */
+.container .word-meaning {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ffa500;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+/* Word Display */
+.container .word-display {
+    font-size: 2em;
+    font-weight: bold;
+    letter-spacing: 5px;
+    margin: 20px 0;
+}
+
+/* Incorrect Guesses */
+.container .guesses {
+    font-size: 20px;
+    font-weight: bolder;
+    color: #ffa500;
+    padding-top: 10px;
+    margin-bottom: 20px;
+    
+}
+
+/* Hearts Section */
+.container p {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+/* Form and Input */
+form {
+    margin-bottom: 20px;
+}
+
+form label {
+    font-size: 1.2em;
+    color: #555;
+    display: block;
+    margin-bottom: 8px;
+}
+
+form input {
+    font-size: 1.2em;
+    padding: 10px;
+    width: 100px;
+    margin: 0 auto 15px;
+    border: none;
+    outline: none;
+    transition: 0.3s;
+    box-shadow: 0 0 5px rgba(90, 47, 176, 0.5);
+}
+
+form input:focus {
+    border-color: #5A2FB0;
+    box-shadow: 0 0 5px rgba(90, 47, 176, 0.5);
+}
+
+/* Buttons */
+button {
+    font-size: 1.1em;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, transform 0.3s ease;
+}
+
+/* Guess Button */
+button[type="submit"] {
+    background-color: #3498DB;
+    color: #fff;
+}
+
+button[type="submit"]:hover {
+    background-color: #1976D2;
+    transform: scale(1.05);
+}
+
+/* Reset Button */
+.reset {
+    background-color: #4CAF50;
+    color: #fff;
+    margin: 10px 0;
+}
+
+button.reset:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+/* Return to Home Button */
+.return button {
+    background-color: #FF6F61;
+    color: #fff;
+}
+
+.return button:hover {
+    background-color: #e53935;
+    transform: scale(1.05);
+}
+
+.word-meaning {
+    font-size: 1.2rem;
+    color: #ffa500;
+    margin: 15px 0;
+    text-align: center;
+    font-style: italic;
+    border: none;
+}

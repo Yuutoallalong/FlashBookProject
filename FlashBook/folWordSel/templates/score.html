@@ -1,0 +1,46 @@
+{% extends "base.html" %} 
+
+{% block title %}
+<title>Score</title>
+{% endblock %} 
+
+{% block custom_styles %}
+<style>
+    body {
+        font-family: "Helvetica", "Arial", sans-serif;
+        color: #333;
+      }
+
+    .container {
+        padding: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block search_url %}{% url 'score' %}{% endblock %}
+
+{% block add_new_link_1 %}
+{% endblock %}
+
+{% block content %}
+<div class="container pb-3 mt-0 pt-0 ms-0">
+    <h2 class="text-start">Score for {{ user.fname }}</h2>
+    {% if noti %}
+        <div class="alert alert-warning">
+            <p>{{ noti }}</p>
+        </div>
+    {% endif %} 
+    <br>
+    {% if graph %}
+    <div>
+        <div>
+            <img src="data:image/png;base64,{{ graph }}" alt="Score Graph">
+        </div>
+    </div>
+    {% else %}
+        <p>You don't have any folders to save scores yet. Please create a new folder to get started!</p>
+    {% endif %}
+</div>
+
+
+{% endblock %}

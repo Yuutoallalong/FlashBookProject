@@ -1,0 +1,57 @@
+{% extends 'base_homepage.html' %}
+
+{% block title %}
+<title>Password Reset Complete</title>
+{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center mt-5">
+    <div class="card shadow-lg p-4" style="width: 50%; border-radius: 10px;">
+        <h2 class="mb-4 text-center text-primary">Password Reset Complete!</h2>
+        <p class="text-center mb-1" style="font-weight: 500; font-size: 1.1rem;">
+            Your password has been successfully set.
+        </p>
+        <p class="text-center mb-4" style="font-weight: 500; font-size: 1.1rem;">
+            Now login with new password! &#128513
+        </p>
+        <a href="{% url 'login' %}" class="btn btn-primary w-100">Back to Login</a>
+    </div>
+</div>
+
+<!-- Custom CSS -->
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .card {
+        background-color: white;
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        font-weight: bold;
+    }
+
+    p {
+        font-weight: 500;
+        color: #555;
+    }
+
+    .btn-primary {
+        background-color: #5A29E4;
+        border: none;
+        font-size: 16px;
+        font-weight: bold;
+        height: 45px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background-color: #472bbf;
+    }
+</style>
+{% endblock %}

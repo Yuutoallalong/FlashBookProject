@@ -1,0 +1,377 @@
+{% extends "base.html" %} 
+
+{% block title %}
+<title>Reward</title>
+{% endblock %} 
+
+{% block custom_styles %}
+<style>
+    body {
+        font-family: "Helvetica", "Arial", sans-serif;
+        color: #333;
+      }
+
+    .container {
+        padding: 3rem;
+    }
+    .redeem-day-streak,
+    .redeem-credits {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .redeem-day-streak h2,
+    .redeem-credits h2 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .reward-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .reward-item {
+      flex: 1 1 calc(33.333% - 20px);
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .reward-item h3 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+    .btn-redeem {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+    .btn-redeem:hover {
+      background-color: #218838;
+    }
+    .btn-redeem:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .color-square {
+        width: 40px; 
+        height: 40px; 
+        border-radius: 5px; 
+        display: inline-block; 
+    }
+
+    .already-owned{
+        margin-top: 5px;
+        margin-bottom: 5px;
+        color: gray;
+        font-size: 0.9em;
+    }
+</style>
+{% endblock %}
+
+{% block search_url %}{% endblock %}
+
+{% block add_new_link_1 %}
+{% endblock %}
+
+{% block content %}
+<div class="container pb-3 mt-0 pt-0 ms-0">
+    {% if noti %}
+        <div class="alert alert-warning">
+            <p>{{ noti }}</p>
+        </div>
+    {% endif %}
+    <!-- section 1 for credits -->
+    <div class="redeem-day-streak">
+        <h2>Redeem Day Streak for Credits</h2>
+        <p>Your current day streak <strong>{{user.day_streak}} day(s)</strong> left <strong>{{user.day_streak_left}} day(s)</strong></p>
+        <p>Use your day streak to earn credits. For every <strong>3 days</strong>, you can redeem <strong>10 credits</strong>.</p>
+        <form method="POST" action="{% url 'redeem_reward' reward_id=0 %}">
+          {% csrf_token %}
+          <button type="submit" class="btn-redeem" {% if user.day_streak_left < 3 %}disabled{% endif %}>Redeem</button>
+        </form>
+      </div>
+
+      <!-- section 2 for hint -->
+      <div class="redeem-day-streak">
+        <h2>Redeem Credits for Hint</h2>
+        <p>Your current credits <strong>{{user.credits}} credit(s)</strong></p>
+        <p>Cost: <strong>50 Credits</strong></p>
+        <form method="POST" action="{% url 'redeem_reward' reward_id=999 %}">
+          {% csrf_token %}
+          <button type="submit" class="btn-redeem" {% if user.credits < 50 %}disabled{% endif %}>Redeem</button>
+        </form>
+      </div>
+  
+      <!-- section 3 for title -->
+      <div class="redeem-credits">
+        <h2>Redeem Credits for Title</h2>
+        <p>Your current credits <strong>{{user.credits}} credit(s)</strong></p>
+        <div class="reward-container">
+            <div class="reward-item">
+                <h3>Letter Seeker</h3>
+                <p>Cost: <strong>10 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=1 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 10 or "Letter Seeker" in user.title_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if 'Letter Seeker' in user.title_ava %}
+                    <p class="already-owned">You already own this title!</p>
+                {% endif %}
+            </div>
+  
+            <div class="reward-item">
+                <h3>Word Explorer</h3>
+                <p>Cost: <strong>20 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=2 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 20 or "Word Explorer" in user.title_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if 'Word Explorer' in user.title_ava %}
+                    <p class="already-owned">You already own this title!</p>
+                {% endif %}
+            </div>
+  
+            <div class="reward-item">
+                <h3>Rookie Linguist</h3>
+                <p>Cost: <strong>50 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=3 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 50 or "Rookie Linguist" in user.title_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if 'Rookie Linguist' in user.title_ava %}
+                    <p class="already-owned">You already own this title!</p>
+                {% endif %}
+            </div>
+
+            <div class="reward-item">
+                <h3>Sentence Spinner</h3>
+                <p>Cost: <strong>80 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=4 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 80 or "Sentence Spinner" in user.title_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if 'Sentence Spinner' in user.title_ava %}
+                    <p class="already-owned">You already own this title!</p>
+                {% endif %}
+            </div>
+
+            <div class="reward-item">
+                <h3>Riddle Solver</h3>
+                <p>Cost: <strong>100 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=5 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 100 or "Riddle Solver" in user.title_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if 'Riddle Solver' in user.title_ava %}
+                    <p class="already-owned">You already own this title!</p>
+                {% endif %}
+            </div>
+
+            <div class="reward-item">
+                <h3>Master of Meaning</h3>
+                <p>Cost: <strong>150 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=6 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 150 or "Master of Meaning" in user.title_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if 'Master of Meaning' in user.title_ava %}
+                    <p class="already-owned">You already own this title!</p>
+                {% endif %}
+            </div>
+
+            <div class="reward-item">
+                <h3>Word Wizard</h3>
+                <p>Cost: <strong>200 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=7 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 200 or "Word Wizard" in user.title_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if 'Word Wizard' in user.title_ava %}
+                    <p class="already-owned">You already own this title!</p>
+                {% endif %}
+            </div>
+
+            <div class="reward-item">
+                <h3>Word God</h3>
+                <p>Cost: <strong>300 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=8 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 300 or "Word God" in user.title_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if 'Word God' in user.title_ava %}
+                    <p class="already-owned">You already own this title!</p>
+                {% endif %}
+            </div>
+
+            <div class="reward-item">
+                <h3>Linguistic Overlord</h3>
+                <p>Cost: <strong>500 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=9 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 500 or "Linguistic Overlord" in user.title_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if 'Linguistic Overlord' in user.title_ava %}
+                    <p class="already-owned">You already own this title!</p>
+                {% endif %}
+            </div>
+        </div>
+      </div>
+
+      <!-- section 4 for card color -->
+      <div class="redeem-credits">
+        <h2>Redeem Credits for Card Color</h2>
+        <p>Your current credits <strong>{{user.credits}} credit(s)</strong></p>
+        <div class="reward-container">
+          <!-- ตัวอย่างของรางวัลที่แลกได้ -->
+            <div class="reward-item">
+                <h3>
+                    <div class="color-square" style="background-color: #FF5733;"></div>
+                </h3> 
+                <p>Cost: <strong>100 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=10 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 100 or "#FF5733" in user.card_color_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if '#FF5733' in user.card_color_ava %}
+                    <p class="already-owned">You already own this card color!</p>
+                {% endif %}
+            </div>
+  
+            <div class="reward-item">
+                <h3>
+                    <div class="color-square" style="background-color: #5BC0EB;"></div>
+                </h3>
+                <p>Cost: <strong>100 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=11 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 100 or "#5BC0EB" in user.card_color_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if '#5BC0EB' in user.card_color_ava %}
+                    <p class="already-owned">You already own this card color!</p>
+                {% endif %}
+            </div>
+  
+            <div class="reward-item">
+                <h3>
+                    <div class="color-square" style="background-color: #28A745;"></div>
+                </h3>
+                <p>Cost: <strong>100 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=12 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 100 or "#28A745" in user.card_color_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if '#28A745' in user.card_color_ava %}
+                    <p class="already-owned">You already own this card color!</p>
+                {% endif %}
+            </div>
+
+            <div class="reward-item">
+                <h3>
+                    <div class="color-square" style="background-color: #FFC107;"></div>
+                </h3>
+                <p>Cost: <strong>100 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=13 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 100 or "#FFC107" in user.card_color_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if '#FFC107' in user.card_color_ava %}
+                    <p class="already-owned">You already own this card color!</p>
+                {% endif %}
+            </div>
+
+            <div class="reward-item">
+                <h3>
+                    <div class="color-square" style="background-color: #D1A1D3;"></div>
+                </h3>
+                <p>Cost: <strong>100 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=14 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 100 or "#D1A1D3" in user.card_color_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if '#D1A1D3' in user.card_color_ava %}
+                    <p class="already-owned">You already own this card color!</p>
+                {% endif %}
+            </div>
+
+            <div class="reward-item">
+                <h3>
+                    <div class="color-square" style="background-color: #F06292;"></div>
+                </h3>
+                <p>Cost: <strong>100 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=15 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 100 or "#F06292" in user.card_color_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if '#F06292' in user.card_color_ava %}
+                    <p class="already-owned">You already own this card color!</p>
+                {% endif %}
+            </div>
+
+            <div class="reward-item">
+                <h3>
+                    <div class="color-square" style="background: linear-gradient(45deg, #F06292, #9C27B0);"></div>
+                </h3>
+                <p>Cost: <strong>300 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=16 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 300 or "linear-gradient(45deg, #F06292, #9C27B0)" in user.card_color_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if 'linear-gradient(45deg, #F06292, #9C27B0)' in user.card_color_ava %}
+                    <p class="already-owned">You already own this card color!</p>
+                {% endif %}
+            </div>
+
+            <div class="reward-item">
+                <h3>
+                    <div class="color-square" style="background: linear-gradient(45deg, #5BC0EB, #28A745);"></div>
+                </h3>
+                <p>Cost: <strong>300 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=17 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 300 or "linear-gradient(45deg, #5BC0EB, #28A745)" in user.card_color_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if 'linear-gradient(45deg, #5BC0EB, #28A745)' in user.card_color_ava %}
+                    <p class="already-owned">You already own this card color!</p>
+                {% endif %}
+            </div>
+
+            <div class="reward-item">
+                <h3>
+                    <div class="color-square" style="background: linear-gradient(45deg, #FFC107, #FF7043);"></div>
+                </h3>
+                <p>Cost: <strong>300 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=18 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 300 or "linear-gradient(45deg, #FFC107, #FF7043)" in user.card_color_ava %}disabled{% endif %}>Redeem</button>
+                </form>
+                {% if 'linear-gradient(45deg, #FFC107, #FF7043)' in user.card_color_ava %}
+                    <p class="already-owned">You already own this card color!</p>
+                {% endif %}
+            </div>
+
+            <div class="reward-item">
+                <h3>Lucky Color Card Chest</h3>
+                <p>Cost: <strong>150 Credits</strong></p>
+                <form method="POST" action="{% url 'redeem_reward' reward_id=50 %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-redeem" {% if user.credits < 150 %}disabled{% endif %}>Redeem</button>
+                </form>
+            </div>
+        </div>
+      </div>
+
+      
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finish</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6dd5ed, #2193b0);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Container */
+        .finish-container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        /* Heading */
+        .finish-heading {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        /* Subheading */
+        .finish-subheading {
+            font-size: 1rem;
+            margin-bottom: 25px;
+            color: #555;
+        }
+
+        /* Score Display */
+        .finish-score {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2193b0;
+            margin-bottom: 25px;
+        }
+
+        /* Button */
+        .finish-button {
+            background-color: #2193b0;
+            color: #fff;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: auto;
+        }
+
+        .finish-button:hover {
+            background-color: #186d8e;
+            transform: translateY(-2px);
+        }
+
+        .finish-button:focus {
+            outline: none;
+        }
+
+        /* Animation */
+        .finish-container {
+            animation: popIn 0.8s ease-out;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Pop-up Styling */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 40px 60px; /* Increased padding */
+            width: 400px; /* Increased width */
+            text-align: center;
+            border-radius: 15px; /* More rounded corners */
+            background-color: #f0f8ff;
+            border: 3px solid #008000;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); /* Added shadow for depth */
+            font-size: 1.5em; /* Increased font size */
+            z-index: 1000;
+            animation: fadeIn 0.5s ease-out; /* Added animation */
+        }
+
+        .popup.incorrect {
+            border-color: #ff0000;
+            background-color: #ffe6e6;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+        }
+
+        .popup button {
+            margin-top: 20px;
+            padding: 15px 30px;
+            background-color: #5A2FB0;
+            color: white;
+            font-size: 1.2em; /* Increased font size */
+            font-weight: bold;
+            border: none;
+            border-radius: 12px; /* Rounded button */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .popup button:hover {
+            background-color: #452a90;
+            transform: scale(1.1); /* Slightly enlarge button on hover */
+        }
+
+        /* Animation for fading in the pop-up */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+        .message{
+            color:#000000;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="finish-container">
+        <h1 class="finish-heading">Congratulations!</h1>
+        <p class="finish-subheading">You’ve successfully completed your flashcardChoices.</p>
+        <!-- Score Display -->
+        <p class="finish-score">Your Score: {{ highscore.score }}</p>
+        <button class="finish-button" onclick="window.location.href='/folder'">Return to Home</button>
+    </div>
+
+    {% if pop_up_message_correct is not none %}
+    <div class="popup-overlay"></div>
+    <div class="popup {% if pop_up_message_correct %}correct{% else %}incorrect{% endif %}">
+        <p class="message">
+            {% if pop_up_message_correct %}
+                Correct Answer! Well done!
+            {% else %}
+                Incorrect Answer! 
+            {% endif %}
+        </p>
+        <button onclick="this.parentElement.style.display='none'; document.querySelector('.popup-overlay').style.display='none';">OK</button>
+    </div>
+    {% endif %}
+</body>
+
+</html>

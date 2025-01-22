@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #5e5ec9, #e8f0fe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Flashcard Container */
+        .flashcard_container {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+
+        /* Topic Display */
+        .topic_display {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background-color: #5A2FB0;
+            color: #fff;
+            font-size: 3em;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Score and Timer Display */
+        .score_display,
+        .timer_display {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .score_display {
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2em;
+            color: #000000;
+        }
+
+        .timer_display {
+            top: 100px;
+            left: 20px;
+            font-size: 1.1em;
+            color: #000000;
+        }
+
+        /* Flashcard Word */
+        .flashcard_word {
+            background-color: #f9f9f9;
+            font-size: 2em;
+            font-weight: 600;
+            color: #333;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 800px;
+            height: 370px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            max-width: 90%;
+            transition: transform 0.3s ease-in-out;
+            padding: 0;
+        }
+
+        /* Button Styles */
+        .action_button {
+            width: 200px;
+            padding: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            position: absolute;
+            bottom: 20px;
+        }
+
+        /* Correct Button */
+        .action_button.correct_button {
+            background-color: #4CAF50;
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Wrong Button */
+        .action_button.wrong_button {
+            background-color: #FF6F61;
+            position: absolute;
+            left: 20px;
+            bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Next Button (Centering) */
+        .action_button.next_button {
+            background-color: #3498DB;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Button Hover Effect */
+        .action_button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Next Button Hover Effect */
+        .action_button.next_button:hover {
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .action_button.correct_button:hover {
+            background-color: #45a049;
+        }
+
+        .action_button.wrong_button:hover {
+            background-color: #e53935;
+        }
+
+        .action_button.next_button:hover {
+            background-color: #1976D2;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Flashcard Container -->
+    <div class="flashcard_container">
+
+        <!-- Topic Display -->
+        <div class="topic_display">Flash Card</div>
+
+        <!-- Score Display -->
+        <div class="score_display">Score: {{ highscore.score }}</div>
+
+        <!-- Timer Display -->
+        <div id="timerDisplay" class="timer_display">Time Left: {{ time_value }} seconds</div>
+
+        <!-- Flashcard Word -->
+        <div class="flashcard_word">{{ word }}</div>
+
+        <!-- Correct Button -->
+        <form action="{% url 'correct_answer' folder_id=folder.folder_id playtime=playtime %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="action_button correct_button" name="correct">Got it!</button>
+        </form>
+
+        <!-- Wrong Button -->
+        <form action="{% url 'wrong_answer' folder_id=folder.folder_id %}" method="post" id="wrongForm">
+            {% csrf_token %}
+            <button type="submit" class="action_button wrong_button" name="wrong" value="wrong">Can't Remember</button>
+        </form>
+
+        <!-- Next Button -->
+        <form action="{% url 'next_word' folder_id=folder.folder_id playtime=playtime %}" method="post" id="nextForm">
+            {% csrf_token %}
+            <button type="submit" class="action_button next_button" name="next">Next</button>
+        </form>
+    </div>
+
+    <script>
+        // This function will update the time every second
+        let time = {{ time_value }}; // Get the value of time from Django context
+        const timerDisplay = document.getElementById("timerDisplay");
+
+        function updateTimer() {
+            if (time <= 0) {
+                clearInterval(timerInterval);  // Stop the timer when it reaches 0
+                timerDisplay.innerHTML = "Time's up!";
+
+                document.getElementById("nextForm").submit();
+
+            } else {
+                time--;  // Decrease time by 1 second
+                timerDisplay.innerHTML = `Time Left: ${time} seconds`; // Update the displayed time
+            }
+        }
+
+        // Start the timer as soon as the page loads
+        const timerInterval = setInterval(updateTimer, 1000); // Update every second
+    </script>
+
+</body>
+
+</html>

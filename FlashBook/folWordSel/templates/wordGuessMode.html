@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Guess</title>
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #5e5ec9, #e8f0fe);
+        }
+
+        /* สไตล์สำหรับแถบด้านบน */
+        .header {
+            background-color: #5A2FB0;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        /* กล่องหลักจัดตำแหน่งทั้งหมด */
+        .container {
+            display: flex;
+            justify-content: center;
+            /* จัดให้อยู่ตรงกลางแนวนอน */
+            align-items: center;
+            /* จัดให้อยู่ตรงกลางแนวตั้ง */
+            height: 75vh;
+            /* ใช้ความสูงของ viewport ทำให้กล่องอยู่ตรงกลางหน้าจอ */
+            padding-top: 50px;
+            /* ขยับให้กล่องลงมาจากแถบ header */
+        }
+
+        /* กล่อง modal */
+        .modal {
+            background-color: #ffffff;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* สไตล์ของแถบตัวเลือก (select) */
+        .mode-select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* สไตล์ปุ่ม confirm */
+        .confirm-btn {
+            background-color: #5A2FB0;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* การเปลี่ยนแปลงของปุ่ม confirm เมื่อ hover */
+        .confirm-btn:hover {
+            background-color: #3b0085;
+        }
+
+        /* การเปลี่ยนแปลงของปุ่ม confirm เมื่อกด */
+        .confirm-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* สไตล์ของปุ่ม Back */
+        .back-container {
+            position: absolute;
+            bottom: 29px; /* ระยะห่างจากขอบล่าง */
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+    
+        /* Back button styling */
+        .back-button {
+            font-size: 18px;
+            color: white;
+            background-color: #5A2FB0;
+            padding: 13px 25px;
+            border-radius: 25px;
+            border: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+    
+        /* Hover effect for back button */
+        .back-button:hover {
+            background-color: #3b0085;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        Word Guess
+    </div>
+
+    <div class="container">
+
+        <!-- กล่อง Set Time -->
+        <div class="modal">
+            <h2>Mode Select</h2>
+            <select class="mode-select" id="modeSelect">
+                <option value="easy">Easy</option>
+                <option value="normal">Normal</option>
+                <option value="hard">Hard</option>
+            </select>
+            <button class="confirm-btn" onclick="confirmMode()">Confirm</button>
+        </div>
+    </div>
+
+    <!-- ปุ่ม Back -->
+    <div class="back-container">
+        <button class="back-button" onclick="window.history.back()">Back</button>
+    </div>
+
+    <script>
+
+        function confirmMode() {
+                // Get the selected mode value
+                const modeSelect = document.getElementById('modeSelect');
+                const selectedMode = modeSelect.value;
+        
+                // Redirect with the selected mode as a query parameter
+                window.location.href = `/folder/{{ folder_id }}/select_game/modeSet/wordguess?difficulty=${selectedMode}`;
+            }
+    </script>
+
+</body>
+
+</html>

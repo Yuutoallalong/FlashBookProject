@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Guess Game</title>
+    <link rel="stylesheet" href="{% static 'wordguess/wordGuess.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Word Guess Game</h1>
+
+        {% if game_end %}
+            <h2>{{ message }}</h2>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="reset" value="true">
+                <button class="reset" "submit">Next Word</button>
+            </form>
+
+            
+            <div class="return">
+                <button type="submit" onclick="window.location.href='/folder'">Return to Home</button>
+            </div>
+            
+        {% else %}
+
+            <h3>📜 Meaning:</h3>
+            <p class="word-meaning">"{{ meaning }}"</p>
+
+            <h3>Guess the word:</h3>
+            <p class="word-display">{{ display_word }}</p>
+
+            <h3>Already Guess:</h3>
+            <p class="guesses">{{ guesses }}</p>
+
+            <h3>💀 Hearts Left:</h3>
+            <p>
+                {% for i in hearts_range %}
+                    🧡
+                {% endfor %}
+            </p>
+
+            <form method="POST">
+                {% csrf_token %}
+                <label for="guess">Guess a letter:</label>
+                <input type="text" id="guess" name="guess" maxlength="1" required>
+                <button type="submit">Guess</button>
+            </form>
+
+            <form method="POST" style="margin-top: 15px;">
+                {% csrf_token %}
+                <input type="hidden" name="hint_request" value="true">
+                <button type="submit" class="hint-button">Get Hint</button>
+            </form>
+            {% if hint_message %}
+                <p class="hint-message">{{ hint_message }}</p>
+            {% endif %}
+            <p>Hints Left: {{ hint_ava }}</p>
+
+        {% endif %}
+    </div>
+</body>
+</html>

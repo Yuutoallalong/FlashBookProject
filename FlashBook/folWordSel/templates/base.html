@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    {% load static %}
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    >
+    {% block title %} {% endblock %}
+
+    <style>
+      /* General body styling */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+      }
+
+      /* Navbar styling */
+      .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1030;
+        background-color: #754de0;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid #ddd;
+      }
+
+      .navbar .navbar-brand {
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+        font-size: 28px;
+        color: white;
+        letter-spacing: 1px;
+      }
+
+      .navbar-brand img {
+        margin-right: 15px;
+        height: 50px;
+        width: 50px;
+      }
+
+      .navbar .form-control {
+        border-radius: 20px;
+        height: 36px;
+        font-size: 0.9rem;
+      }
+
+      .nav-search {
+        font-size: 16px;
+        color: white;
+        text-transform: uppercase;
+        font-weight: bold;
+        padding: 8px 20px;
+        border-radius: 20px;
+        background-color: #FFC107;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        border: none;
+        height: 36px;
+      }
+
+      .nav-search:hover {
+        background-color: #FFD700;
+        color: #754de0;
+      }
+
+      /* Logout button styling */
+      .logout-btn {
+        font-size: 16px;
+        color: white;
+        text-transform: uppercase;
+        font-weight: bold;
+        padding: 8px 20px;
+        border-radius: 20px;
+        background-color: #754de0; /* สีม่วง */
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2), 0px 0px 15px rgba(0, 0, 0, 0.2);
+        border: none;
+        height: 36px;
+        text-decoration: none;  
+      }
+
+      .logout-btn:hover {
+        background-color: #5e39b5; /* สีม่วงเข้มขึ้นเมื่อ hover */
+        color: white;
+      }
+
+      .nav-search:disabled {
+        font-size: 16px;
+        color: #333;  /* สีข้อความอ่อนลง */
+        text-transform: uppercase;
+        font-weight: bold;
+        padding: 8px 20px;
+        border-radius: 20px;
+        background-color: #ffe082; /* สีพื้นหลังเหลืองอ่อน */
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: none;  /* ไม่มีเงาเมื่อปุ่ม disable */
+        border: none;
+        height: 36px;
+        cursor: default; /* cursor กลับเป็นแบบปกติ */
+    }
+    
+    .nav-search:disabled:hover {
+        background-color: #ffe082; /* สีพื้นหลังยังคงเหมือนเดิมเมื่อ hover */
+        color: #333; /* สีข้อความยังคงจาง */
+    }
+
+      /* Sidebar styling */
+      .sidebar {
+        width: 250px;
+        background-color: white;
+        padding: 1rem;
+        position: fixed;
+        top: 56px;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 4px 0 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .sidebar ul.nav.flex-column {
+        margin-top: 20px; /* เว้นระยะจากขอบด้านบน */
+      }
+
+
+      .sidebar .nav-link {
+        color: #333;
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: bold;
+        padding: 12px 15px;
+        margin-bottom: 0.6rem;
+        border-radius: 8px;
+        background-color: white;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      .sidebar .nav-link:hover {
+        background-color: #E5E4E2;
+      }
+
+      .sidebar hr {
+        margin: 1.5rem 0;
+        border-color: #ddd;
+      }
+
+      .sidebar .image-links {
+        display: flex;
+        justify-content: space-evenly;
+        margin-top: 20px;
+      }
+
+      .sidebar .image-links img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar .image-links img:hover {
+        transform: scale(1.1);
+      }
+
+      /* Main content styling */
+      .container {
+        margin-left: 270px;
+        margin-top: 80px;
+      }
+
+      .logo-text {
+        font-size: 30px;
+        font-weight: bold;
+        color: rgb(243, 154, 37);
+        letter-spacing: 1px;
+      }
+      .logo-highlight {
+          color: #FFD700;
+      }
+
+      .profile {
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      .profile-tooltip {
+        position: absolute;
+        top: 100%; /* วาง tooltip ไว้ด้านล่างของลิงก์ */
+        right: 3.5%; /* ชิดขอบขวา */
+        {% if card_color_is_hash %}
+        background-color: {{user.card_color}};
+        {% else %}
+        background: {{user.card_color}};
+        {% endif %}
+        padding: 10px;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        z-index: 1000;
+        white-space: nowrap; /* ป้องกันข้อความตัด */
+        opacity: 0; /* ซ่อน */
+        visibility: hidden; /* ซ่อน */
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+    
+        /* แสดง tooltip เมื่อ hover ที่ profile หรือ tooltip */
+        .profile-container:hover .profile-tooltip,
+        .profile-tooltip:hover {
+            opacity: 1;
+            visibility: visible;
+        }
+
+    </style>
+
+    {% block custom_styles %} {% endblock %}
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/folder">
+          <img src="{% static 'images/FlashbookLogo.png' %}" alt="Logo">
+          <span class="logo-text">Flash<span class="logo-highlight">Book</span></span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <div class="mx-auto" style="width: 50%">
+            <form class="d-flex" method="GET" action="{% block search_url %}{% endblock %}">
+              <input class="form-control form-control-sm me-2" type="search" placeholder="Search" aria-label="Search" name="query"/>
+              <button class="nav-search" type="submit">Search</button>
+            </form>
+          </div>
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
+            <li class="nav-item">
+              <form method="POST" action="{% url 'check_in' %}">
+                  {% csrf_token %}
+                  {% if is_checked_in_today %}
+                      <button type="submit" class="nav-search" disabled>Already Checked-in</button>
+                  {% else %}
+                      <button type="submit" class="nav-search">Check-in</button>
+                  {% endif %}
+              </form>
+            </li>
+            <li class="nav-item profile-container">
+              <a class="nav-link d-flex align-items-center" href="{% url 'profile' %}" style="font-size: 0.9rem">
+                {% if user.profile_picture %}
+                  <img src="{{ user.profile_picture.url }}" alt="Profile" class="rounded-circle me-2" style="width: 30px; height: 30px"/>
+                {% else %}
+                  <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Profile" class="rounded-circle me-2" style="width: 30px; height: 30px"/>
+                {% endif %}
+                <span class="profile">Profile</span>
+              </a>
+              <div class="profile-tooltip">
+                <p><strong>Username:</strong> {{user.user}}</p>
+                <p><strong>Title:</strong> {% if user.title %}{{user.title}}{% else %}None{% endif %}</p>
+                <p><strong>Email:</strong> {{user.email}}</p>
+                <p><strong>Day Streak:</strong> {{user.day_streak}}</p>
+                <p><strong>Credits:</strong>{{user.credits}}</p>
+            </div>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'logout' %}" class="logout-btn ms-2">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+   <!-- Sidebar -->
+   <div class="sidebar mt-3">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'folder' %}">Folder</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'score' %}">Score</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'reward' %}">Reward Center</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="{% url 'community' %}">Community</a>
+        </li>
+        <hr />
+        <li class="nav-item">
+          {% block add_new_link_1 %}
+          <a class="nav-link" href="#">Add New Folder</a>
+          {% endblock %}
+        </li>
+      </ul>
+      <div class="image-links">
+        <a href="https://github.com/6510615047/CN331Project">
+          <img src="https://images.seeklogo.com/logo-png/30/1/github-logo-png_seeklogo-304612.png" alt="Github" />
+        </a>
+        <a href="https://trello.com/b/5YABm7nL/flashbook-board">
+          <img src="https://cdn.icon-icons.com/icons2/3053/PNG/512/trello_macos_bigsur_icon_189616.png" alt="Trello" />
+        </a>
+        <a href="https://docs.google.com/document/d/1er6FhLIjA15bvJsXNkVrvJ4ipueN2B2I_awsXeoXCII/edit?tab=t.0">
+          <img src="https://www.iconpacks.net/icons/1/free-document-icon-901-thumb.png" alt="Document" />
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+      {% block content %} {% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>

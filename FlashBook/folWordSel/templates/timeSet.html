@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flash card</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        /* Full-screen container */
+        body,
+        html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #5e5ec9, #e8f0fe);
+            display: flex;
+            /* Enable Flexbox */
+            justify-content: center;
+            /* Center horizontally */
+            align-items: center;
+            /* Center vertically */
+        }
+
+        
+
+        /* Header style */
+        .header {
+            background-color: #5A2FB0;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 32px;
+            font-weight: bold;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Main container for Set Time, Timer, and Score */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin-top: 100px;
+            height: 80%;
+        }
+
+        /* Box styling */
+        .box {
+            background-color: #ffffff;
+            padding: 20px;
+            width: 250px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Score box styling */
+        .score-header {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .score-display {
+            font-size: 30px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Set time box styling */
+        .time-select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .confirm-btn {
+            background-color: #5A2FB0;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s;
+        }
+
+        .confirm-btn:hover {
+            background-color: #3b0085;
+        }
+
+        .confirm-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Timer box styling */
+        .timer-header {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .timer-display {
+            font-size: 30px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Back button styling */
+        .back-container {
+            position: absolute;
+            bottom: 29px; /* ระยะห่างจากขอบล่าง */
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+    
+        /* Back button styling */
+        .back-button {
+            font-size: 18px;
+            color: white;
+            background-color: #5A2FB0;
+            padding: 10px 25px;
+            border-radius: 25px;
+            border: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+    
+        /* Hover effect for back button */
+        .back-button:hover {
+            background-color: #3b0085;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Top header -->
+    <div class="header">
+        Flash card
+    </div>
+
+    <!-- Main container for Set Time, Timer, and Score -->
+    <div class="container">
+        <!-- Set time and game selection box -->
+        <div class="box">
+            <h2>Set time</h2>
+            <form method='GET' id="gameForm">
+                <select class="time-select" id="timeSelect" name="time">
+                    <option value="10">10 seconds</option>
+                    <option value="20">20 seconds</option>
+                    <option value="30">30 seconds</option>
+                    <option value="60">60 seconds</option>
+                </select>
+                <h2>Select Game</h2>
+                <select class="time-select" id="gameSelect" name="game">
+                    <option value="flashcard">Flashcard</option>
+                    <option value="flashcardChoice">FlashcardChoice</option>
+                </select>
+                <button class="confirm-btn" type="submit">Confirm</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Back button -->
+    <div class="back-container">
+        <button class="back-button" onclick="window.history.back()">Back</button>
+    </div>
+
+    <script>
+        document.getElementById('gameForm').addEventListener('submit', function(event) {
+            const gameSelect = document.getElementById('gameSelect').value;
+            const folderId = {{ folder_id }}; // Django context variable
+            const form = event.target;
+        
+            if (gameSelect === 'flashcard') {
+                form.action = "{% url 'flashcard' folder_id=folder_id %}";
+            } else if (gameSelect === 'flashcardChoice') {
+                form.action = "{% url 'flashcard_choice' folder_id=folder_id %}";
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,337 @@
+{% extends "base.html" %} 
+
+{% block title %}
+<title>Word</title>
+{% endblock %} 
+
+{% block custom_styles %}
+<style>
+  body {
+    background-color: #f8f9fa;
+    font-family: "Helvetica", "Arial", sans-serif;
+    color: #333;
+  }
+
+  .container {
+    margin-top: 6rem;
+    position: relative; /* ให้ container เป็นตำแหน่ง relative */
+  }
+
+  .card-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .card {
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 1rem;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-body {
+    padding: 1.25rem;
+  }
+
+  .word-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #007bff;
+    margin-bottom: 0.5rem;
+  }
+
+  .word-meaning {
+    font-size: 1.2rem;
+    color: #555;
+  }
+
+  .row {
+    margin-top: 2rem;
+  }
+
+  /* ปุ่ม Edit */
+  .edit-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    color: #007bff;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  /* ปุ่ม + อยู่ขวาบนของหน้า */
+  .add-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px; /* ให้ปุ่ม + อยู่ขวาบนของ container */
+    background-color: transparent;
+    color: #007bff;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    border-radius: 50%;
+  }
+
+  .add-btn:hover {
+    color: #fff;
+    background-color: #007bff;
+  }
+
+  h2 {
+    text-align: center;
+    font-weight: 600;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .play-btn {
+    background-color: #007BFF;
+    color: white; 
+    font-size: 16px; 
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none; 
+    border-radius: 30px; 
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); 
+    cursor: pointer; 
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-transform: uppercase;
+    text-decoration: none; 
+}
+
+
+  .play-btn:hover {
+      color: white; 
+      background-color: #0056b3;
+      transform: translateY(-3px);
+      box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3); 
+  }
+
+  
+  .play-btn:active {
+      transform: translateY(0); 
+      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+  }
+</style>
+{% endblock %} 
+
+{% block search_url %}
+{% url 'search_word' folder_id=folder.folder_id %}
+{% endblock %}
+
+{% block add_new_link_1 %}
+<button class="nav-link" style="border: none; background: transparent" data-toggle="modal" data-target="#addWordModal">Add New Word</button>
+{% endblock %} 
+
+{% block content %}
+
+<div class="container ms-2">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2 class="text-start pb-3 mt-5 ms-5">Word List in {{ folder.folder_name }}</h2>
+        <a href="{% url 'select_game' folder_id=folder.folder_id %}" class="play-btn"
+          {% if not words %}
+              style="pointer-events: none; background-color: gray; border-color:gray;"
+              onclick="return false;"
+          {% endif %}
+          >
+          Play
+        </a>
+      </div>
+
+  {% if messages %}
+  <div class="alert alert-warning">
+
+    {% for message in messages %}
+    <p>{{ message }}</p>
+    {% endfor %}
+
+  </div>
+
+  {% endif %}
+
+  <!-- Grid สำหรับแสดงการ์ดคำศัพท์ -->
+  <div class="card-container">
+
+    {% if words %}
+        {% for word in words %}
+        <div class="card">
+        <!-- ปุ่ม Edit -->
+        <a href="{% url 'edit_word' word_id=word.word_id folder_id=folder.folder_id %}" data-toggle="modal" data-target="#editWordModal-{{ word.word_id }}" class="edit-btn" style="text-decoration: none;">
+            ✏️
+        </a>
+        
+        <div class="card-body">
+            <h5 class="word-title">{{ word.word }}</h5>
+            <p class="word-meaning">{{ word.meaning }}</p>
+        </div>
+        </div>
+
+        <div class="modal fade" id="editWordModal-{{ word.word_id }}" tabindex="-1" role="dialog" aria-labelledby="editWordModalLabel-{{ word.word_id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="editWordModalLabel-{{ word.word_id }}">Edit Word</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'edit_word' word_id=word.word_id folder_id=folder.folder_id%}" method="POST">
+                      {% csrf_token %}
+                      <div class="form-group">
+                      <label for="wordName-{{ word.word_id }}">Word</label>
+                      <input type="text" class="form-control" id="wordName-{{ word.word_id }}" name="word_name" value="{{ word.word }}" required />
+                      <br>
+                      <label for="meaning-{{ word.word_id }}">Meaning</label>
+                      <input type="text" class="form-control" id="meaning-{{ word.word_id }}" name="meaning" value="{{ word.meaning }}" required />
+                      </div>
+                      <br />
+                      <button type="submit" name="action" value="edit" class="btn btn-primary">Edit Word</button>
+                      <button type="submit" name="action" value="delete" class="btn btn-danger">Delete Word</button>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <p>{{ noti }}</p>
+    {% endif %}
+
+  </div>
+</div>
+
+<div class="modal fade" id="addWordModal" tabindex="-1" role="dialog" aria-labelledby="addFolderModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addWordModalLabel">Add New Word</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'add_word' folder_id=folder.folder_id %}" method="POST" id="wordForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="wordName">Word</label>
+                <input type="text" class="form-control" id="wordName" name="word_name" required/>
+                <br>
+                <label for="meaning">Meaning</label>
+                <input type="text" class="form-control" id="meaning" name="meaning" required/>
+            </div>
+            <br />
+            <button type="submit" name="action" value="add" class="btn btn-primary">Add Word</button>
+            <button type="button" id="autoMeaningBtn" class="btn btn-secondary">Auto Meaning</button>
+          </form>
+          <hr>
+          <!-- เพิ่มฟอร์มสำหรับอัปโหลดไฟล์ -->
+          <form method="POST" enctype="multipart/form-data" action="{% url 'upload_flashcards' folder_id=folder.folder_id %}">
+            {% csrf_token %}
+          <div class="form-group">
+            <label for="flashcards_file">Upload Flashcards (CSV/Excel):</label>
+            <input type="file" class="form-control" id="fileUpload" name="flashcards_file" accept=".csv, .xls, .xlsx" required>
+          </div>
+            <button type="submit" class="btn btn-primary mt-3">Upload</button>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+<script>
+  document.getElementById('autoMeaningBtn').addEventListener('click', function() {
+    const wordInput = document.getElementById('wordName').value;
+
+    // ตรวจสอบว่ามีคำในช่อง Word หรือไม่
+    if (wordInput) {
+        fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${wordInput}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data[0] && data[0].meanings[0].definitions[0]) {
+                    const meaning = data[0].meanings[0].definitions[0].definition;
+                    document.getElementById('meaning').value = meaning;
+                    document.getElementById('meaning').setCustomValidity(''); // Reset custom validity
+                } else {
+                    alert("Meaning not found for this word.");
+                }
+            })
+            .catch(error => {
+                alert("Error fetching meaning.");
+                console.error(error);
+            });
+    } else {
+        alert("Please enter a word first.");
+    }
+  });
+
+  // ตรวจสอบก่อนส่งฟอร์มว่ามีการกรอก Meaning หรือไม่
+  document.getElementById('wordForm').addEventListener('submit', function(event) {
+      const meaningInput = document.getElementById('meaning').value;
+
+      if (!meaningInput) {
+          alert("Please provide a meaning.");
+          event.preventDefault(); // Prevent form submission
+      }
+  });
+
+  document.getElementById('uploadFileBtn').addEventListener('click', function () {
+    const form = document.getElementById('uploadFileForm');
+    const formData = new FormData(form);
+    const fileInput = document.getElementById('fileUpload');
+
+    if (!fileInput.files.length) {
+        alert('Please select a file to upload.');
+        return;
+    }
+
+    fetch("{% url 'upload_flashcards' folder_id=folder.folder_id %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const cardContainer = document.querySelector('.card-container');
+            data.words.forEach(word => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-body">
+                        <h5 class="word-title">${word.word}</h5>
+                        <p class="word-meaning">${word.meaning}</p>
+                    </div>`;
+                cardContainer.appendChild(card);
+            });
+            $('#addWordModal').modal('hide');
+        } else {
+            alert(data.error || 'An error occurred.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while uploading the file.');
+    });
+});
+
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+
+{% endblock %}

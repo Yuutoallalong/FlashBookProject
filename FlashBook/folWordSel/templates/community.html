@@ -1,0 +1,304 @@
+{% extends "base.html" %} 
+{% comment %} เหลือ leaderboard กับ รางวัล {% endcomment %}
+{% block title %}
+<title>Community</title>
+{% endblock %}
+
+{% block custom_styles %}
+<style>
+    body {
+        font-family: "Helvetica", "Arial", sans-serif;
+        color: #333;
+    }
+
+    .container-custom {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem; /* ระยะห่างระหว่างส่วนต่างๆ */
+    }
+
+    .container{
+        padding: 3rem;
+        margin-right: 0;
+        width: 80%;
+        max-width: none;
+    }
+    
+    .page-layout {
+        display: grid;
+        grid-template-columns: 2fr 1fr; /* Main Content (2 ส่วน) และ Leaderboard (1 ส่วน) */
+        gap: 1rem; /* ระยะห่างระหว่างกล่อง */
+    }
+    
+    .main-content {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+    }
+
+    .game-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* ทำให้เกมแสดงในรูปแบบ 3 คอลัมน์ */
+        gap: 1rem;
+        padding-top: 1rem;
+    }
+    
+    .game-card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .game-card h3 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    .game-card p {
+        font-size: 1rem;
+        color: #555;
+    }
+    
+    .play-btn {
+        background-color: #007BFF;
+        color: white; 
+        font-size: 16px; 
+        font-weight: bold;
+        padding: 10px 20px;
+        border: none; 
+        border-radius: 30px; 
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); 
+        cursor: pointer; 
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        text-transform: uppercase;
+        text-decoration: none; 
+    }
+    
+    
+    .play-btn:hover {
+        color: white; 
+        background-color: #0056b3;
+        transform: translateY(-3px);
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3); 
+    }
+    
+      
+    .play-btn:active {
+        transform: translateY(0); 
+        box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+    }
+    
+    .play-btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+    
+
+    .leaderboard-container {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+    }
+    
+    .announcement {
+        grid-column: 1 / -1; /* ใช้พื้นที่ทั้งหมดของ grid */
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+</style>
+{% endblock %}
+
+{% block search_url %}{% endblock %}
+
+{% block add_new_link_1 %}
+    {% if user.is_admin %}
+        <button class="nav-link" style="border: none; background: transparent" data-toggle="modal" data-target="#addPublicGameModal">
+            Add New Public Game
+        </button>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-custom pb-3 mt-0 pt-0 ms-0 pe-0">
+    <div class="page-layout">
+        <!-- Main Content Container -->
+        <div class="main-content">
+            <h1>Public Game - <span style="font-size: 1rem; font-weight: normal;">Join now to play and earn credits and exciting rewards!</span></h1>
+            <p style="margin-bottom: 5px;">Answer correctly every 3 questions and earn 10 credits!</p>
+            <div class="public-game">
+                <!-- Check if there are open games -->
+                {% if open_games %}
+                    <!-- Grid Layout for Open Games -->
+                    <div class="game-list">
+                        {% for game in open_games %}
+                            <div class="game-card">
+                                <h3><strong>{{ game.name }}</strong></h3>
+                                <p><strong>Description:</strong> {{ game.description }}</p>
+                                <p><strong>GameType:</strong> {{ game.game_type }}</p>
+                                <p><strong>End Time:</strong> {{ game.end_time|date:"Y-m-d H:i" }}</p>
+                                <!-- Button to start the game -->
+                                {% if game.status == "OPEN" %}
+                                    <form method="POST" action="{% url 'join_game' game.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="play-btn" 
+                                            {% if game.players.count >= game.max_players or game.is_joined %}
+                                                disabled 
+                                            {% endif %}
+                                            >
+                                            {% if game.is_joined %}
+                                                Already Joined
+                                            {% elif game.players.count >= game.max_players %}
+                                                Game Full
+                                            {% else %}
+                                                Join
+                                            {% endif %}
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No game available</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Leaderboard Container -->
+        <div class="leaderboard-container">
+            <h1>Leaderboard</h1>
+            <h6>Top 10 Day Streak</h6>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Username</th>
+                        <th>Title</th>
+                        <th>Day Streak</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in top_users %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            {% if user != '-' %}
+                                {{ user.user }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user != '-' %}
+                                {{ user.title }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user != '-' %}
+                                {{ user.day_streak }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Add New Public Game Modal -->
+    <div class="modal fade" id="addPublicGameModal" tabindex="-1" role="dialog" aria-labelledby="addPublicGameModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPublicGameModalLabel">Add New Public Game</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="POST" action="{% url 'add_public_game' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="name">Game Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" name="description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="max_players">Max Players</label>
+                            <input type="number" class="form-control" id="max_players" name="max_players" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="folder">Folder</label>
+                            <select class="form-control" id="folder" name="folder" required>
+                                {% for folder in folders %}
+                                    <option value="{{ folder.id }}">{{ folder.folder_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="game_type">Game Type</label>
+                            <select class="form-control" id="game_type" name="game_type">
+                                <option value="FLASHCARD" selected>Flashcard</option>
+                                <option value="FLASHCARDCHOICE">Flashcard Choice</option>
+                                <option value="WORDGUESS_EASY">Wordguess Easy</option>
+                                <option value="WORDGUESS_NORMAL">Wordguess Normal</option>
+                                <option value="WORDGUESS_HARD">Wordguess Hard</option>
+                            </select>
+                        </div>                        
+                        <div class="form-group">
+                            <label for="start_time">Start Time</label>
+                            <input type="datetime-local" class="form-control" id="start_time" name="start_time" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="end_time">End Time</label>
+                            <input type="datetime-local" class="form-control" id="end_time" name="end_time" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Game Status</label>
+                            <select class="form-control" id="status" name="status">
+                                <option value="OPEN" selected>Open</option>
+                                <option value="FINISHED">Finished</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add Game</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock %}
+

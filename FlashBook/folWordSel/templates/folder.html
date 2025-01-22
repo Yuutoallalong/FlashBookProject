@@ -1,0 +1,180 @@
+{% extends "base.html" %} 
+
+{% block title %}
+<title>Folder</title>
+{% endblock %} 
+
+{% block custom_styles %}
+<style>
+  /* Custom Minimalist Styling */
+  body {
+    background-color: #f8f9fa;
+    font-family: "Helvetica", "Arial", sans-serif;
+    color: #333;
+  }
+
+  .container {
+    padding: 3rem;
+  }
+
+  .folder-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .folder-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .folder-card h5 {
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-bottom: 0;
+  }
+
+  .folder-card .folder-name {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    text-decoration: none; /* Remove underline */
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 2rem;
+    gap: 1rem; /* Add space between buttons */
+  }
+
+  .action-buttons .btn {
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
+    color: #007bff;
+    background: none;
+    border: none; /* Remove border */
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    text-transform: uppercase;
+  }
+
+  .action-buttons .btn:hover {
+    background-color: #007bff;
+    color: white;
+  }
+
+  h2 {
+    text-align: center;
+    font-weight: 600;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+</style>
+{% endblock %} 
+
+{% block search_url %}
+{% url 'search_folder' %}
+{% endblock %}
+
+{% block add_new_link_1 %}
+<button class="nav-link" style="border: none; background: transparent" data-toggle="modal" data-target="#addFolderModal">
+  Add New Folder
+</button>
+{% endblock %}
+
+{% block content %}
+<div class="container pb-3 mt-0 pt-0 ms-0">
+    <h2 class="text-start">Welcome, {{ user.fname }}</h2>
+  </div>
+
+  {% if messages %}
+  <div class="alert alert-warning">
+
+    {% for message in messages %}
+    <p>{{ message }}</p>
+    {% endfor %}
+
+  </div>
+
+  {% endif %} 
+
+
+    {% if folders%}
+        {% for folder in folders %}
+        <div class="card folder-card">
+            <div class="d-flex justify-content-between align-items-center">
+
+            <a href="/folder/{{ folder.folder_id }}" class="folder-name">
+                <h5 class="card-title">{{ folder.folder_name }}</h5>
+            </a>
+        
+            <a href="{% url 'edit_folder' folder_id=folder.folder_id %}" data-toggle="modal" data-target="#editFolderModal-{{ folder.folder_id }}" class="edit-btn" style="text-decoration: none;">✏️</a>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editFolderModal-{{ folder.folder_id }}" tabindex="-1" role="dialog" aria-labelledby="editFolderModalLabel-{{ folder.folder_id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="editFolderModal-{{ folder.folder_id }}">Edit Folder</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'edit_folder' folder_id=folder.folder_id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                    <label for="folderName-{{ folder.folder_id }}">Folder name</label>
+                    <input type="text" class="form-control" id="folderName-{{ folder.folder_id }}" name="folder_name" value="{{ folder.folder_name }}" required />
+                    <br>
+                    </div>
+                    <br />
+                    <button type="submit" name="action" value="edit" class="btn btn-primary">Edit Folder</button>
+                    <button type="submit" name="action" value="delete" class="btn btn-danger">Delete Folder</button>
+                </form>
+                </div>
+            </div>
+            </div>
+            </div>
+        {% endfor %}
+    {% else %}
+    <p>{{ noti }}</p>
+    {% endif %}
+</div> 
+
+<!-- Modal for Adding Folder -->
+<div class="modal fade" id="addFolderModal" tabindex="-1" role="dialog" aria-labelledby="addFolderModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addFolderModalLabel">Add New Folder</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'add_folder' %}" method="POST">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="folderName">Folder Name</label>
+            <input type="text" class="form-control" id="folderName" name="folder_name" required/>
+          </div>
+          <br />
+          <button type="submit" class="btn btn-primary">Add Folder</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock %}

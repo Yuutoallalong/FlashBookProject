@@ -1,0 +1,76 @@
+{% extends "base_homepage.html" %}
+{% load static %}
+{% block content %}
+<div class="homepage-container d-flex align-items-center justify-content-between">
+    <!-- Left Section: Image -->
+    <div class="image-section">
+        <img src="{% static 'images/FlashbookLogo.png' %}" alt="Flashbook Logo" class="img-fluid">
+    </div>
+
+    <!-- Right Section: Welcome Text -->
+    <div class="text-section text-center" style="max-width: 50%; padding: 20px;">
+        <h1 style="font-size: 3rem; font-weight: bold; color: #472bbf; margin-bottom: 20px;">
+            Welcome to <span style="color: #ff7043;">FlashBook</span>
+        </h1>
+        <p style="font-size: 1.5rem; color: #555; margin-bottom: 30px;">
+            Your ultimate destination for learning and inspiration.
+            Dive into our world of fast, high-quality, and accessible learning solutions.
+        </p>
+    </div>
+</div>
+
+<!-- Additional Styles -->
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(135deg, #5e5ec9, #e8f0fe);
+        overflow-x: hidden;  /* ป้องกันการเกิด scroll ด้านข้าง */
+    }
+
+    .homepage-container {
+        min-height: 100vh; 
+        padding: 20px 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .image-section img {
+        width: 550px;
+        max-width: 100%;
+        border: none; 
+        outline: none; 
+        animation: fadeIn 1.5s ease-in-out;
+    }
+
+    .text-section h1 span {
+        animation: textColorChange 2s infinite;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes textColorChange {
+        0% {
+            color: #ff7043;
+        }
+        50% {
+            color: #FFD700;
+        }
+        100% {
+            color: #ff7043;
+        }
+    }
+</style>
+{% endblock %}

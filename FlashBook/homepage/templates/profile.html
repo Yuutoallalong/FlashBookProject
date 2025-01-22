@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Profile</title>
+{% endblock %} 
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow p-4 mb-5 bg-white rounded" style="margin-left: 10px; margin-right: 10px;">
+        <div class="row">
+            <!-- Left Section: Profile Picture Display -->
+            <div class="col-md-3 d-flex flex-column align-items-center mb-3 position-relative">
+                <!-- ใช้ label ครอบรูปภาพแทนการใช้ปุ่มเลือกไฟล์ -->
+                <label for="profile_picture" class="profile-label disabled-label"> 
+                    {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="profile-img mb-3" id="profile-img-preview"/>
+                    {% else %}
+                        <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Default Profile Picture" class="profile-img mb-3" id="profile-img-preview"/>
+                    {% endif %}
+                    <div class="edit-overlay">
+                        <span>Edit</span>
+                    </div>
+                </label>
+                <h3 class="text-center">{{ user.user }}</h3>
+            </div>
+
+            <!-- Right Section: Profile Info -->
+            <div class="col-md-9">
+                <h2 class="text-purple">Profile Information</h2>
+                
+                <form method="post" enctype="multipart/form-data" id="profile-form">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="user" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="user" name="user" value="{{ user.user }}" required disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fname" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="fname" name="fname" value="{{ user.fname }}" required disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="lname" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lname" name="lname" value="{{ user.lname }}" required disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <select class="form-control" id="title" name="title" disabled>
+                            <option value="" {% if not user.title %}selected{% endif %}>None</option>
+                            {% for title_option in user.title_ava %}
+                                <option value="{{ title_option }}" {% if user.title == title_option %}selected{% endif %}>
+                                    {{ title_option }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="card_color" class="form-label">Card Color</label>
+                        <select class="form-control" id="card_color" name="card_color" disabled>
+                            <option value="#fff" {% if not user.card_color %}selected{% endif %} style="background-color: #fff;">#fff</option>
+                            {% for color_option in user.card_color_ava %}
+                                <option value="{{ color_option }}" {% if user.card_color == color_option %}selected{% endif %} style="background: {{ color_option }};">
+                                    {{ color_option }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="current_password" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="current_password" name="current_password" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password" disabled>
+                    </div>
+
+                    <input type="file" id="profile_picture" name="profile_picture" style="display: none;" disabled>
+
+                    <!-- ปุ่มต่าง ๆ -->
+                    <button type="button" class="btn btn-info" id="edit-btn">Edit</button>
+                    <button type="submit" name="action" value="save" class="btn btn-primary d-none" id="save-btn">Save Changes</button>
+                    <button type="button" name="action" value="discard" class="btn btn-secondary d-none" id="discard-btn">Discard</button>
+                    <button type="button" name="action" value="cancel" class="btn btn-danger d-none" id="cancel-btn">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('profile-form');
+    const fields = form.querySelectorAll('input, select');
+    const editBtn = document.getElementById('edit-btn');
+    const saveBtn = document.getElementById('save-btn');
+    const discardBtn = document.getElementById('discard-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const profilePicture = document.getElementById('profile_picture');
+    const profileLabel = document.querySelector('.profile-label');
+    const imgElement = document.getElementById('profile-img-preview');
+
+    let originalValues = {};
+    let originalImageSrc = imgElement.src; // เก็บรูปเดิมตอนโหลดหน้า
+
+    function saveOriginalValues() {
+        originalValues = {};
+        fields.forEach(field => {
+            if (field.name) {
+                originalValues[field.name] = field.value;
+            }
+        });
+    }
+
+    function restoreOriginalValues() {
+        for (let name in originalValues) {
+            const field = form.querySelector(`[name="${name}"]`);
+            if (field) field.value = originalValues[name];
+        }
+    }
+
+    function setEditable(editable) {
+        fields.forEach(field => {
+            field.disabled = !editable;
+        });
+        if (editable) {
+            profileLabel.classList.remove('disabled-label');
+        } else {
+            profileLabel.classList.add('disabled-label');
+        }
+    }
+
+    // เริ่มต้นใน View Mode
+    setEditable(false);
+    saveOriginalValues();
+
+    editBtn.addEventListener('click', () => {
+        // เข้าสู่ Edit Mode
+        setEditable(true);
+        // เซฟค่าอีกรอบ เผื่อข้อมูลอัปเดตล่าสุด
+        saveOriginalValues();
+        
+        editBtn.classList.add('d-none');
+        saveBtn.classList.remove('d-none');
+        discardBtn.classList.remove('d-none');
+        cancelBtn.classList.remove('d-none');
+    });
+
+    discardBtn.addEventListener('click', () => {
+        // Discard คืนค่าข้อมูลกลับไปเป็นค่าเดิม
+        restoreOriginalValues();
+        // คืนค่ารูปภาพกลับเป็นรูปเดิม
+        imgElement.src = originalImageSrc;
+        // ล้างไฟล์ที่ถูกเลือกใหม่
+        profilePicture.value = '';
+        // ยังอยู่ใน Edit Mode
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        // Cancel ออกจาก Edit Mode กลับไป View Mode
+        restoreOriginalValues();
+        imgElement.src = originalImageSrc;
+        profilePicture.value = '';
+        setEditable(false);
+
+        editBtn.classList.remove('d-none');
+        saveBtn.classList.add('d-none');
+        discardBtn.classList.add('d-none');
+        cancelBtn.classList.add('d-none');
+    });
+
+    profilePicture.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imgElement.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+<style>
+    .container {
+        margin-top: 120px;
+    }
+
+    .profile-img {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        /*transition: opacity 0.3s ease;*/
+    }
+
+    .profile-label {
+        position: relative;
+        /*cursor: pointer;
+        display: inline-block;*/
+        display: inline-block;
+        width: 180px;
+        height: 180px;
+    }
+
+    .edit-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.4);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    /* ตอนเป็น View Mode ให้ profile-label ไม่สามารถคลิกได้ */
+    .disabled-label {
+        pointer-events: none;
+    }
+
+    .profile-label:hover:not(.disabled-label) .edit-overlay {
+        opacity: 1;
+    }
+
+    .card {
+        max-width: 850px;
+        margin: auto;
+        margin-left: 0;
+    }
+
+    h2.text-purple {
+        color: #754de0;
+    }
+
+    h3 {
+        color: #333;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}

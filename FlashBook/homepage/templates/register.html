@@ -1,0 +1,133 @@
+{% extends "base_homepage.html" %}
+
+{% block title %}
+<title>Registration</title>
+{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center mt-5">
+    <div class="card shadow-lg p-4" style="width: 50%; border-radius: 10px;">
+        <h2 class="mb-4 text-center text-primary">Registration</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <p class="form-error">{{ form.username.errors|striptags }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.fname.label_tag }}
+                {{ form.fname }}
+                {% if form.fname.errors %}
+                    <p class="form-error">{{ form.fname.errors|striptags }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.lname.label_tag }}
+                {{ form.lname }}
+                {% if form.lname.errors %}
+                    <p class="form-error">{{ form.lname.errors|striptags }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <p class="form-error">{{ form.email.errors|striptags }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.birthdate.label_tag }}
+                {{ form.birthdate }}
+                {% if form.birthdate.errors %}
+                    <p class="form-error">{{ form.birthdate.errors|striptags }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.password1.label_tag }}
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <p class="form-error">{{ form.password1.errors|striptags }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.password2.label_tag }}
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <p class="form-error">{{ form.password2.errors|striptags }}</p>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Register</button>
+        </form>
+        {% if form.non_field_errors %}
+            <p class="form-error mt-3">{{ form.non_field_errors|striptags }}</p>
+        {% endif %}
+    </div>
+    
+</div>
+
+<!-- Custom CSS -->
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .card {
+        background-color: white;
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        font-weight: bold;
+    }
+
+    label {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"], input[type="email"], input[type="password"], input[type="date"] {
+        width: 100%;
+        height: 45px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-top: 5px;
+        box-sizing: border-box;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #5A29E4;
+        box-shadow: 0 0 5px rgba(90, 41, 228, 0.5);
+    }
+
+    .btn-primary {
+        background-color: #5A29E4;
+        border: none;
+        font-size: 16px;
+        font-weight: bold;
+        height: 45px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background-color: #472bbf;
+    }
+
+    .form-error {
+        color: #dc3545;
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+
+    .container {
+    padding-bottom: 25px;
+}
+</style>
+{% endblock %}
