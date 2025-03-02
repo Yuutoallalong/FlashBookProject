@@ -25,9 +25,12 @@ SECRET_KEY = 'django-insecure-q7f4e+27(%j7v^jf)+6%w+--$o2_=*%6)*$8712-#j2u$$@m+j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1',"Flashbook.pythonanywhere.com"]
+ALLOWED_HOSTS = ['localhost','127.0.0.1',"Flashbook.pythonanywhere.com","3.106.164.207","flashbook.duckdns.org"]
 DEFAULT_DOMAIN = 'https://Flashbook.pythonanywhere.com'
 DEFAULT_PROTOCOL = 'https'  # เนื่องจาก PythonAnywhere ใช้ HTTPS โดยค่าเริ่มต้น
+CSRF_TRUSTED_ORIGINS = [
+    "https://flashbook.duckdns.org"
+]
 
 # Application definition
 
