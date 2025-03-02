@@ -173,12 +173,11 @@ def next_word(request, folder_id, playtime):
     
     return redirect('flashcard', folder_id=folder.folder_id)
 
-
-def finish(request,folder_id):
-    del request.session['user_id_admin']
-    del request.session['folder_id_admin']
-    request.session['came_from_community'] = False
-    return render(request,'finish.html')
+def finish(request, folder_id): 
+    request.session.pop('user_id_admin', None)  # Avoids KeyError if key doesn't exist
+    request.session.pop('folder_id_admin', None)  # Avoids KeyError if key doesn't exist
+    request.session['came_from_community'] = False  
+    return render(request, 'finish.html')
 
 
 

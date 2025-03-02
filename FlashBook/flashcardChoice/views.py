@@ -181,8 +181,8 @@ def finishChoice(request, folder_id):
         'pop_up_message_correct': pop_up_message_correct,
     }
     
-    del request.session['user_id_admin']
-    del request.session['folder_id_admin']
+    request.session.pop('user_id_admin', None)
+    request.session.pop('folder_id_admin', None)
     request.session['came_from_community'] = False
     request.session.pop('pop_up_message_correct', None)
     return render(request, 'finishChoice.html', context)
