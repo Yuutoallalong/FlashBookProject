@@ -24,3 +24,4 @@ tzdata==2024.2
 django
 matplotlib==3.10.1
 pandas
+chardet
